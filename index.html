@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Portfólio de infraestrutura de Matheo Mellis: Microsoft 365, Azure, redes, segurança e automação.">
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
+<title>Matheo Mellis · Infra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: ficha de inventário de um MSP — cabeçalho com "status do ativo", projetos como itens de inventário filtráveis, trilha do tempo, certificados verificáveis */
+:root{
+  --bg:#F3F5F6; --surface:#FFFFFF; --fg:#14212B; --muted:#5A6A75; --line:#D5DDE2;
+  --accent:#0A6C93; --accent-soft:#E1EFF5;
+  --ok:#1E7A4C; --ok-soft:#E2F2E9; --warn:#A66300; --warn-soft:#FBEFD9; --plan:#5B4FA8; --plan-soft:#ECEAF8; --lab:#4A5B66; --lab-soft:#E7ECEF;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1A21; --surface:#152430; --fg:#E4ECF0; --muted:#93A6B2; --line:#26394A;
+  --accent:#5CC2E8; --accent-soft:#16384A;
+  --ok:#6BD39C; --ok-soft:#173A2A; --warn:#F2B35A; --warn-soft:#3E2E14; --plan:#B4A9F5; --plan-soft:#2C2750; --lab:#A9BAC5; --lab-soft:#24333E; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F1A21; --surface:#152430; --fg:#E4ECF0; --muted:#93A6B2; --line:#26394A;
+  --accent:#5CC2E8; --accent-soft:#16384A;
+  --ok:#6BD39C; --ok-soft:#173A2A; --warn:#F2B35A; --warn-soft:#3E2E14; --plan:#B4A9F5; --plan-soft:#2C2750; --lab:#A9BAC5; --lab-soft:#24333E; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1080px;margin:0 auto;padding-block:32px 64px;display:grid;gap:48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h2{font-size:1.5rem;font-weight:700}
+.eyebrow{font:500 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* Cabeçalho */
+.hero{display:grid;gap:20px;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:end}
+.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:700;letter-spacing:-.02em;line-height:1}
+.hero .role{font-size:1.15rem;font-weight:500;margin-top:10px}
+.hero p{max-width:62ch;color:var(--muted);margin:12px 0 0}
+.asset{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;font:400 .82rem/1.4 var(--f-mono)}
+.asset .r{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.asset .r:last-child{border-bottom:0;padding-bottom:0}
+.asset .k{color:var(--muted)}
+.asset .v{text-align:right;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:1px;box-shadow:0 0 0 3px var(--ok-soft)}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+
+/* Agora */
+.now{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.now li{list-style:none;border-top:2px solid var(--warn);padding-top:10px;display:grid;gap:4px}
+.now ul{display:contents}
+.now b{font-weight:600}
+.now span{color:var(--muted);font-size:.9rem}
+
+/* Filtros */
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.filters{display:grid;gap:10px}
+.fgroup{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fgroup .lbl{font:500 .72rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-width:56px}
+.chip{font:500 .82rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip:hover{border-color:var(--accent)}
+.count{font:400 .82rem var(--f-mono);color:var(--muted)}
+.techfilter{display:flex;gap:8px;align-items:center;font-size:.85rem;color:var(--muted)}
+.techfilter button{font:inherit;background:none;border:0;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0}
+
+/* Projetos */
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:grid;grid-template-rows:auto 1fr auto}
+.card summary{list-style:none;cursor:pointer;padding:16px 16px 12px;display:grid;gap:8px}
+.card summary::-webkit-details-marker{display:none}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.card h3{font-size:1.05rem;font-weight:700;line-height:1.25}
+.card .meta{font:400 .76rem var(--f-mono);color:var(--muted)}
+.card .one{font-size:.9rem;margin:0}
+.card .more{font:500 .78rem var(--f-mono);color:var(--accent)}
+.card[open] .more{display:none}
+.card .body{padding:0 16px 12px;display:grid;gap:8px;font-size:.9rem}
+.card .body p{margin:0}
+.card .body b{font-weight:600}
+.card .tags{display:flex;flex-wrap:wrap;gap:4px;padding:10px 16px 14px;border-top:1px solid var(--line)}
+.tag{font:400 .72rem var(--f-mono);background:var(--accent-soft);color:var(--fg);border:0;border-radius:4px;padding:2px 6px;cursor:pointer}
+.tag:hover,.tag.on{background:var(--accent);color:var(--bg)}
+.pill{font:500 .7rem var(--f-mono);white-space:nowrap;border-radius:999px;padding:3px 8px;letter-spacing:.02em}
+.s-prod{background:var(--ok-soft);color:var(--ok)}
+.s-done{background:var(--accent-soft);color:var(--accent)}
+.s-wip{background:var(--warn-soft);color:var(--warn)}
+.s-test{background:var(--warn-soft);color:var(--warn)}
+.s-plan{background:var(--plan-soft);color:var(--plan)}
+.s-lab{background:var(--lab-soft);color:var(--lab)}
+.empty{color:var(--muted);padding:24px 0}
+
+/* Trilha */
+.trail{display:grid;gap:0;border-left:2px solid var(--line);margin-left:6px}
+.step{display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;padding:0 0 18px 18px;position:relative}
+.step::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.step.future::before{border-style:dashed;border-color:var(--muted)}
+.step .when{font:500 .8rem var(--f-mono);color:var(--muted);padding-top:2px}
+.step b{font-weight:600}
+.step p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+@media (max-width:520px){.step{grid-template-columns:1fr;gap:2px}}
+
+/* Stack */
+.stack{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.stack div{display:grid;gap:6px}
+.stack h3{font-size:.95rem}
+.stack .row{display:flex;flex-wrap:wrap;gap:4px}
+
+/* Certificados */
+.certs{width:100%;border-collapse:collapse;font-size:.9rem}
+.certs th{font:500 .72rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.certs td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.certs td.d{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+
+/* Contato */
+.contact{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.contact code{font:400 .9rem var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+.contact button{font:500 .82rem var(--f-body);border:1px solid var(--accent);color:var(--accent);background:none;border-radius:6px;padding:6px 10px;cursor:pointer}
+.note{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">Portfólio · Infraestrutura</div>
+    <h1>Matheo Mellis</h1>
+    <div class="role">Infraestrutura &amp; Cloud · Microsoft 365, Azure, redes e segurança</div>
+    <p>Trabalho num MSP no Rio de Janeiro cuidando de ponta a ponta do ambiente de 5 clientes: identidade, servidores, rede, segurança, backup e automação. Gosto de transformar trabalho manual em processo automatizado e documentado.</p>
+  </div>
+  <div class="asset" aria-label="Resumo do perfil">
+    <div class="r"><span class="k">status</span><span class="v"><span class="dot"></span>aberto a oportunidades</span></div>
+    <div class="r"><span class="k">local</span><span class="v">Rio de Janeiro · BR</span></div>
+    <div class="r"><span class="k">modelo</span><span class="v">remoto · híbrido RJ · relocação</span></div>
+    <div class="r"><span class="k">ambiente atual</span><span class="v">5 clientes · ~220 endpoints</span></div>
+    <div class="r"><span class="k">certificações</span><span class="v">9 verificáveis</span></div>
+    <div class="r"><span class="k">formação</span><span class="v">Ciência da Computação · CR 9,30</span></div>
+    <div class="r"><span class="k">idiomas</span><span class="v">PT nativo · EN avançado</span></div>
+  </div>
+</header>
+
+<section aria-labelledby="h-now">
+  <div class="head"><div><div class="eyebrow">Em andamento</div><h2 id="h-now">O que estou fazendo agora</h2></div></div>
+  <div class="now"><ul id="now"></ul></div>
+</section>
+
+<section aria-labelledby="h-proj">
+  <div class="head">
+    <div><div class="eyebrow">Inventário de projetos</div><h2 id="h-proj">Projetos</h2></div>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="filters">
+    <div class="fgroup" role="group" aria-label="Filtrar por área"><span class="lbl">Área</span><span id="f-area" style="display:contents"></span></div>
+    <div class="fgroup" role="group" aria-label="Filtrar por status"><span class="lbl">Status</span><span id="f-status" style="display:contents"></span></div>
+    <div class="techfilter" id="techfilter" hidden>Ferramenta: <b id="techname"></b> <button type="button" id="techclear">limpar</button></div>
+  </div>
+  <div class="grid" id="grid" style="margin-top:16px"></div>
+  <p class="empty" id="empty" hidden>Nenhum projeto com esse filtro. Tente outra área ou status.</p>
+  <p class="note">Clique num projeto para ver problema, solução e resultado. Clique numa ferramenta para ver todos os projetos que a usam. Os nomes de clientes foram omitidos por confidencialidade.</p>
+</section>
+
+<section aria-labelledby="h-trail">
+  <div class="head"><div><div class="eyebrow">Trilha</div><h2 id="h-trail">Linha do tempo</h2></div></div>
+  <div class="trail" id="trail"></div>
+</section>
+
+<section aria-labelledby="h-stack">
+  <div class="head"><div><div class="eyebrow">Ferramentas em uso</div><h2 id="h-stack">Stack</h2></div></div>
+  <div class="stack" id="stack"></div>
+</section>
+
+<section aria-labelledby="h-certs">
+  <div class="head"><div><div class="eyebrow">Credenciais</div><h2 id="h-certs">Certificações</h2></div></div>
+  <div class="tablewrap">
+    <table class="certs">
+      <thead><tr><th>Certificação</th><th>Emissor</th><th>Data</th><th>Verificação</th></tr></thead>
+      <tbody id="certs"></tbody>
+    </table>
+  </div>
+  <p class="note">Planejada: Microsoft AB-900 (Copilot and Agent Administration Fundamentals).</p>
+</section>
+
+<section aria-labelledby="h-contact">
+  <div class="head"><div><div class="eyebrow">Contato</div><h2 id="h-contact">Vamos conversar</h2></div></div>
+  <div class="contact">
+    <code id="c-mail">matheommellis@gmail.com</code><button type="button" data-copy="c-mail">Copiar</button>
+    <a href="https://www.linkedin.com/in/matheo-mellis/" target="_blank" rel="noopener">linkedin.com/in/matheo-mellis</a>
+    <a href="https://github.com/MatheoMellis" target="_blank" rel="noopener">github.com/MatheoMellis</a>
+  </div>
+  <p class="note" id="copied" aria-live="polite"></p>
+</section>
+
+<footer>Atualizado em novembro de 2026. Métricas vêm de projetos reais; ambientes de clientes descritos sem identificação.</footer>
+</div>
+
+<script>
+const STATUS = {
+  prod:{t:"Em produção",c:"s-prod"}, done:{t:"Concluído",c:"s-done"}, wip:{t:"Em andamento",c:"s-wip"},
+  test:{t:"Em teste",c:"s-test"}, plan:{t:"Planejado",c:"s-plan"}, lab:{t:"Homelab",c:"s-lab"}
+};
+const AREAS = ["Identidade & M365","Servidores & Cloud","Rede & Segurança","Automação & IA","Homelab"];
+
+const P = [
+ {t:"Identidade híbrida AD + Entra ID",a:"Identidade & M365",s:"wip",w:"out–nov/2026",ctx:"Gráfica · 22 usuários",
+  one:"AD local virou a fonte das identidades sem duplicar nenhuma conta já existente na nuvem.",
+  prob:"Os colaboradores não conseguiam entrar em qualquer máquina com a mesma conta, e o tenant já tinha contas criadas só na nuvem.",
+  did:"Entra Connect Sync com Password Hash Sync, hard match por ImmutableID, Hybrid Entra Join, Windows Hello for Business com Cloud Kerberos Trust e SSPR com writeback. Promovi um novo DC e transferi os papéis FSMO quando o Essentials chegou ao limite de 25 usuários. Optei por GPO + Datto RMM em vez de Intune porque 9 dos 22 usuários não têm Entra ID P1.",
+  res:"Hard match validado (0 contas novas, 1 atualização); as 22 contas conferidas via Graph. Rollout das estações em andamento.",
+  k:["Active Directory","Entra Connect","Hybrid Join","Windows Hello","Microsoft Graph","GPO","Datto RMM"]},
+ {t:"Migração Google Workspace → Microsoft 365",a:"Identidade & M365",s:"done",w:"jun–ago/2026",ctx:"Gráfica",
+  one:"Migração completa de e-mail e arquivos, com validação item a item.",
+  prob:"Os alertas apontavam dezenas de milhares de e-mails faltando depois da migração.",
+  did:"Validei a migração (Arquivo Morto, inflação por labels do Gmail, OneDrive), recriei aliases, virei o MX, configurei arquivamento MRM e bloqueei a criação de grupos. Montei canais compartilhados no Teams entre dois tenants via B2B Direct Connect.",
+  res:"542 pastas validadas, 99,85% de paridade no OneDrive. Os alarmes eram falsos; a única lacuna real eram 4 aliases.",
+  k:["Exchange Online","OneDrive","Teams","PowerShell","Microsoft 365"]},
+ {t:"Migração de aplicação para nova VM Linux",a:"Servidores & Cloud",s:"done",w:"set–out/2026",ctx:"Indústria de embalagens",
+  one:"Aplicação de produção movida para Ubuntu com ~15 min de parada.",
+  prob:"O agente de backup não suportava a versão do Ubuntu da VM, e a conversão do host Hyper-V falhou em três sistemas diferentes.",
+  did:"Nova VM Ubuntu 24.04 com 5 apps em PM2, PostgreSQL e nginx; cópias do VHDX verificadas por SHA256 em 3 hosts; conta de serviço no AD para o TrueNAS; novo padrão de admin local para hipervisores.",
+  res:"Virada com cerca de 15 minutos de parada; backup Unitrends rodando desde 26/10.",
+  k:["Hyper-V","Ubuntu","nginx","PostgreSQL","Unitrends","TrueNAS"]},
+ {t:"Acesso Zero Trust para fornecedor",a:"Rede & Segurança",s:"done",w:"out/2026",ctx:"Gráfica",
+  one:"O técnico externo acessa só 2 portas de um servidor, sem nenhuma porta aberta na internet.",
+  prob:"Um fornecedor precisava de acesso remoto a um servidor de produção.",
+  did:"Cloudflare Tunnel com Cloudflare One Client (WARP), private destinations, One-time PIN e políticas de rede. A conta ficou no nome do cliente, para o acesso não depender do MSP. Também respondi ao incidente de certificados eMudhra atualizando o cloudflared em dois servidores.",
+  res:"Acesso restrito às portas 9090 e 10000, sem limite de upload, documentado num SOP ilustrado no IT Glue.",
+  k:["Cloudflare Zero Trust","Cloudflare Tunnel","IT Glue","Linux"]},
+ {t:"VPN hub-and-spoke IPsec",a:"Rede & Segurança",s:"wip",w:"ago/2026",ctx:"3 sites",
+  one:"Túneis Sophos com o MSP como hub e failover via Starlink.",
+  prob:"Os sites precisavam se falar com segurança e manter a conexão quando o link principal caísse.",
+  did:"Túneis IPsec em Sophos Firewall, com o MSP como hub; failover via Starlink em um dos sites.",
+  res:"Túneis ativos entre os 3 sites; failover em ajuste final.",
+  k:["Sophos Firewall","IPsec","VPN"]},
+ {t:"Cockpit de tickets WhatsApp ↔ Teams ↔ Autotask",a:"Automação & IA",s:"prod",w:"ago–out/2026",ctx:"MSP · clientes reais",
+  one:"Central de atendimento que substituiu o Chatwoot e abre e atualiza tickets no PSA.",
+  prob:"Pedidos chegavam pelo WhatsApp e se perdiam até alguém abrir o ticket à mão.",
+  did:"Workflows no n8n integrando Meta Cloud API, Microsoft Graph, Power Automate e Autotask REST API: template fora da janela de 24 h, cores do card pelo status real do ticket, botões de abrir, marcar tempo e fechar, comando //ligacao. Descartei gateways não oficiais pelo risco de banimento do número.",
+  res:"Em produção com clientes desde 22/08/2026; corrigida a causa raiz dos tickets duplicados.",
+  k:["n8n","Autotask","WhatsApp Cloud API","Microsoft Graph","Teams","Power Automate"]},
+ {t:"App de suporte para os clientes",a:"Automação & IA",s:"prod",w:"mai–jun/2026",ctx:"Endpoints gerenciados",
+  one:"App de desktop que abre ticket completo, já com o diagnóstico da máquina.",
+  prob:"Os tickets chegavam sem informação da máquina e exigiam idas e voltas.",
+  did:"App Electron; Cloudflare Worker com HMAC por máquina e lookup do item de configuração no Autotask; prioridades mapeadas; distribuição em massa via Datto RMM, com tarefa agendada no contexto do usuário.",
+  res:"Concluído; os componentes foram reaproveitados no cockpit de tickets.",
+  k:["Electron","Cloudflare Workers","Autotask","Datto RMM","n8n","Gemini"]},
+ {t:"Checkup mensal automatizado",a:"Automação & IA",s:"test",w:"out/2026",ctx:"Todos os clientes",
+  one:"Um componente PowerShell no RMM substitui a checagem manual de início de mês.",
+  prob:"A checagem mensal de servidores, storage e rede era manual e demorada.",
+  did:"Checkup-Mensal.ps1, somente leitura: iDRAC via Redfish (discos, SEL, firmware), TrueNAS (pools e backup de configuração), UniFi (firmware e backup), velocidade das portas e Windows Server, com relatório HTML e UDFs no Datto RMM.",
+  res:"Testado em um cliente; próximo passo é combinar SNMP para monitoramento contínuo com o script para o relatório.",
+  k:["PowerShell","Datto RMM","iDRAC","TrueNAS","UniFi","Windows Server"]},
+ {t:"Painel único de ordens de serviço",a:"Automação & IA",s:"test",w:"set–nov/2026",ctx:"Gráfica · 150–200 OS/dia",
+  one:"Pesquisa de campo e um painel de criação de OS sobre a API do ERP do cliente.",
+  prob:"A triagem levava em média 8m47s por OS e cerca de dois terços dos pedidos chegavam pelo WhatsApp.",
+  did:"Cronometrei operadores em campo, analisei a API (credenciais por tenant, campos sem POST documentado), calculei o ROI e desenvolvi uma extensão Chrome/Edge com backend FastAPI.",
+  res:"Diagnóstico, roadmap e planilha de ROI entregues; o painel está em testes com o cliente.",
+  k:["FastAPI","Python","JavaScript","APIs REST"]},
+ {t:"Investigação de password spray",a:"Rede & Segurança",s:"done",w:"out/2026",ctx:"Gráfica",
+  one:"Alerta de atividade arriscada analisado do início ao fim.",
+  prob:"Um alerta do SaaS Alerts apontava tentativas de login suspeitas.",
+  did:"Análise dos logs de sign-in e recomendações registradas no ticket.",
+  res:"777 tentativas falhas de cerca de 100 países e nenhum login com sucesso.",
+  k:["SaaS Alerts","Entra ID","Autotask"]},
+ {t:"Auditoria de Active Directory",a:"Rede & Segurança",s:"plan",w:"out/2026",ctx:"Escritório de pré-impressão",
+  one:"Script de auditoria somente leitura e plano de correção em 8 fases.",
+  prob:"O AD tinha anos de configuração acumulada sem revisão.",
+  did:"Script de auditoria somente leitura; plano em 8 fases cobrindo KRBTGT, LAPS, estrutura de OUs e política de senhas.",
+  res:"Plano entregue e aguardando aprovação.",
+  k:["Active Directory","PowerShell","LAPS"]},
+ {t:"Golden image do Windows 11",a:"Servidores & Cloud",s:"done",w:"jan/2026",ctx:"MSP",
+  one:"Imagem padronizada para preparar máquinas mais rápido.",
+  prob:"Cada máquina nova era preparada à mão, de jeitos diferentes.",
+  did:"Sysprep, captura de .wim armazenado num servidor Linux, divisão com DISM para pendrive FAT32 e deploy pelo NinjaOne OS Deployment.",
+  res:"Processo de preparação padronizado e documentado.",
+  k:["Windows 11","DISM","NinjaOne"]},
+ {t:"Padronização de admin local",a:"Rede & Segurança",s:"prod",w:"out/2026",ctx:"Todos os clientes",
+  one:"Contas de administrador local padronizadas por tipo de máquina.",
+  prob:"Cada cliente tinha contas de admin diferentes, sem padrão.",
+  did:"Componente no Datto RMM compatível do Windows Server 2008 R2 ao 2022, com detecção automática de Hyper-V.",
+  res:"Em uso em todos os clientes.",
+  k:["Datto RMM","PowerShell","Windows Server"]},
+ {t:"Base de SOPs no IT Glue",a:"Servidores & Cloud",s:"prod",w:"out/2025 – hoje",ctx:"MSP",
+  one:"Procedimentos escritos para o que antes estava só na cabeça de alguém.",
+  prob:"Procedimentos importantes não estavam documentados.",
+  did:"SOPs de acesso ao TrueNAS via túnel do Datto RMM e jump host, Custom Tunnel SSH, iDRAC, Hyper-V Core com administração remota, migração para o M365 e onboarding de estações. Script em Python para consolidar a base. Integração do n8n com a API do IT Glue.",
+  res:"Base de conhecimento usada pela equipe no dia a dia.",
+  k:["IT Glue","Datto RMM","Hyper-V","TrueNAS","iDRAC","Python","n8n"]},
+ {t:"Processos com Power Platform",a:"Identidade & M365",s:"prod",w:"dez/2025 – jun/2026",ctx:"Indústria de embalagens",
+  one:"Formulários e aprovações que antes rodavam por e-mail.",
+  prob:"Requisições internas e não conformidades eram controladas por e-mail e planilha.",
+  did:"Forms → SharePoint → Power Automate → PDF → aba no Teams para requisição de almoxarifado; requisição de licenças com aprovação no Teams; não conformidades no Microsoft Lists com e-mail automático.",
+  res:"Fluxos em uso pelo cliente.",
+  k:["Power Automate","SharePoint","Microsoft Lists","Teams","Forms"]},
+ {t:"Rede mesh com NetBird",a:"Rede & Segurança",s:"done",w:"out/2025 – jan/2026",ctx:"MSP",
+  one:"Acesso remoto via WireGuard sem abrir portas no firewall.",
+  prob:"Era preciso acessar máquinas atrás de CGNAT sem expor portas.",
+  did:"Estudo, implantação, convite de usuários e atualização dos clientes Windows.",
+  res:"Acesso remoto funcionando sem port forwarding.",
+  k:["NetBird","WireGuard"]},
+ {t:"Atendimento por WhatsApp — versão 1",a:"Automação & IA",s:"done",w:"dez/2025",ctx:"MSP",
+  one:"Primeira versão da central de atendimento, depois substituída pelo cockpit.",
+  prob:"O atendimento por WhatsApp não era centralizado.",
+  did:"Evolution API, Chatwoot e Redis em Docker Swarm, no servidor da empresa.",
+  res:"Funcionou como base para o cockpit atual.",
+  k:["Docker","Chatwoot","Redis","Linux"]},
+ {t:"Portal de suporte self-service",a:"Automação & IA",s:"plan",w:"set/2026",ctx:"Produto do MSP",
+  one:"Camada self-service sobre o RMM, com catálogo fechado de ações.",
+  prob:"Pedidos simples, como reset de senha, ocupavam o suporte humano.",
+  did:"Arquitetura de broker independente do RMM, allowlist de ações, reset de senha via Entra/Graph, chat com IA e acesso remoto sem expor o painel. Roadmap em fases com critérios de aceite; credenciais de API do NinjaOne configuradas.",
+  res:"Em validação de viabilidade.",
+  k:["NinjaOne","Datto RMM","Microsoft Graph","Entra ID"]},
+ {t:"Homelab com dois servidores",a:"Homelab",s:"lab",w:"2026",ctx:"Pessoal",
+  one:"Dois notebooks antigos viraram servidores de automação, mídia e backup.",
+  prob:"Queria um ambiente próprio para testar sem mexer em produção.",
+  did:"Ubuntu Server e Linux Mint, Docker, Tailscale com Funnel (TLS automático, sem port forwarding), Samba, Jellyfin com aceleração por hardware, backup com restic e rsync, IPs estáticos via netplan e duas interfaces Wi-Fi com route-metric.",
+  res:"Serviços publicados na internet sem expor o IP residencial.",
+  k:["Docker","Tailscale","Linux","Jellyfin","restic"]},
+ {t:"Plataforma de automação e IA local",a:"Homelab",s:"lab",w:"mar–set/2026",ctx:"Pessoal",
+  one:"n8n, agendador de posts e LLMs locais rodando em casa.",
+  prob:"Queria automações e IA sem depender de serviços pagos.",
+  did:"Três instâncias de n8n, Postiz com Postgres, Redis e Temporal, Ollama, e um agente autônomo em Python (browser-use + LangChain) orquestrando duas máquinas.",
+  res:"Plataforma rodando 24/7 no homelab.",
+  k:["n8n","Ollama","Python","Docker","PostgreSQL"]},
+ {t:"Garimpador",a:"Homelab",s:"lab",w:"mai–jul/2026",ctx:"Pessoal",
+  one:"Monitor de ofertas que avisa no Telegram.",
+  prob:"Acompanhar preços manualmente tomava tempo.",
+  did:"Node.js com cron num mini-PC Linux, Docker, scraping com retry e lotes rotativos; versão alternativa agendada no GitHub Actions. Firewall restrito à LAN e ao Tailscale.",
+  res:"Motor da Amazon funcionando; Mercado Livre e Shopee planejados.",
+  k:["Node.js","Docker","GitHub Actions","Tailscale"]},
+];
+
+const NOW = [
+ ["Rollout do AD híbrido","Migração dos perfis das estações para as contas sincronizadas."],
+ ["Painel de ordens de serviço","Testes com o cliente antes de entrar em produção."],
+ ["Monitoramento contínuo","SNMP no Datto RMM somado ao checkup mensal automatizado."],
+ ["Certificação AB-900","Microsoft 365 Copilot and Agent Administration Fundamentals."],
+ ["8º período adiantado","Formatura prevista para abril de 2027."],
+];
+
+const TRAIL = [
+ ["2023","Início de Ciência da Computação","Universidade Estácio de Sá."],
+ ["abr/2025","Entrada na A2 Inteligência Digital","Estágio em infraestrutura num MSP: suporte, redes, segurança e Microsoft 365."],
+ ["jun–ago/2025","Primeiras certificações","MS-900, SC-900, AZ-900, Google IT Support e NinjaOne Certified Technician."],
+ ["out/2025","Documentação e acesso seguro","SOPs no IT Glue, NetBird e certificação Sophos Endpoint Engineer."],
+ ["jan/2026","Golden image do Windows 11","Padronização da preparação de máquinas."],
+ ["mai–ago/2026","Automação do suporte","App de suporte, migração para o M365 e cockpit de tickets em produção."],
+ ["out–nov/2026","Identidade e segurança","AD híbrido, acesso Zero Trust, investigação de password spray e auditoria de AD."],
+ ["abr/2027","Formatura prevista","Bacharelado em Ciência da Computação.",true],
+];
+
+const STACK = [
+ ["Identidade & M365",["Active Directory","Entra ID","Entra Connect","Hybrid Join","Windows Hello","GPO","Exchange Online","SharePoint","Teams","Power Automate","Microsoft Graph"]],
+ ["Servidores & Cloud",["Windows Server","Hyper-V","XCP-ng","Azure","TrueNAS","Linux","Ubuntu","Docker","PostgreSQL","nginx"]],
+ ["Rede & Segurança",["Sophos Firewall","UniFi","Cloudflare Zero Trust","NetBird","Tailscale","IPsec","Datto EDR","SaaS Alerts","LAPS"]],
+ ["MSP & Backup",["Datto RMM","NinjaOne","Autotask","IT Glue","Unitrends","MSP360","iDRAC"]],
+ ["Automação & IA",["PowerShell","Python","n8n","Node.js","FastAPI","Claude","Gemini","Copilot","Ollama"]],
+];
+
+const CERTS = [
+ ["NinjaOne Certified Technician — MSP","NinjaOne","ago/2025",null],
+ ["Sophos Central Endpoint Protection Certified Engineer v5.0","Sophos","out/2025",null],
+ ["Microsoft Certified: Azure Fundamentals (AZ-900)","Microsoft","ago/2025","https://learn.microsoft.com/pt-br/users/matheohenriquedematosmellis-8400/credentials/certification/azure-fundamentals"],
+ ["Microsoft Certified: Security, Compliance, and Identity Fundamentals (SC-900)","Microsoft","jul/2025","https://learn.microsoft.com/pt-br/users/matheohenriquedematosmellis-8400/credentials/certification/security-compliance-and-identity-fundamentals"],
+ ["Microsoft 365 Certified: Fundamentals (MS-900)","Microsoft","jun/2025","https://learn.microsoft.com/pt-br/users/matheohenriquedematosmellis-8400/credentials/certification/microsoft-365-fundamentals"],
+ ["Ethical Hacker","Cisco (via ESCOM/CCOMGEX)","jun/2026","https://www.credly.com/badges/035d0f68-442a-4b5a-88c3-aaed634dad5c/public_url"],
+ ["Introduction to Cybersecurity","Cisco (via CEFET-RJ)","mar/2026","https://www.credly.com/badges/2b129492-d651-4bc0-8165-b39fcce338b0/public_url"],
+ ["Cyber Threat Management","Cisco","set/2025","https://www.credly.com/badges/50ece7a0-c561-4047-b0d4-ad4a0c730e9d/public_url"],
+ ["Google IT Support Professional Certificate","Google / Coursera","jun/2025","https://www.credly.com/badges/acc2dc2e-c3f3-4c00-88c3-2a47aec50225/public_url"],
+];
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const state = {area:"Todas", status:"Todos", tech:null};
+
+function chips(el, items, key){
+  el.innerHTML = items.map((v) => `<button type="button" class="chip" data-k="${key}" data-v="${esc(v)}" aria-pressed="${state[key]===v}">${esc(key==="status"&&STATUS[v]?STATUS[v].t:v)}</button>`).join("");
+}
+function renderFilters(){
+  chips($("f-area"), ["Todas", ...AREAS], "area");
+  chips($("f-status"), ["Todos", ...Object.keys(STATUS)], "status");
+  $("techfilter").hidden = !state.tech;
+  $("techname").textContent = state.tech || "";
+}
+function render(){
+  const list = P.filter((p) => (state.area==="Todas"||p.a===state.area) && (state.status==="Todos"||p.s===state.status) && (!state.tech||p.k.includes(state.tech)));
+  $("grid").innerHTML = list.map((p) => `
+   <details class="card">
+    <summary>
+     <div class="top"><h3>${esc(p.t)}</h3><span class="pill ${STATUS[p.s].c}">${STATUS[p.s].t}</span></div>
+     <div class="meta">${esc(p.a)} · ${esc(p.ctx)} · ${esc(p.w)}</div>
+     <p class="one">${esc(p.one)}</p>
+     <span class="more">ver detalhes</span>
+    </summary>
+    <div class="body">
+     <p><b>Problema.</b> ${esc(p.prob)}</p>
+     <p><b>O que fiz.</b> ${esc(p.did)}</p>
+     <p><b>Resultado.</b> ${esc(p.res)}</p>
+    </div>
+    <div class="tags">${p.k.map((k) => `<button type="button" class="tag${k===state.tech?" on":""}" data-tech="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+   </details>`).join("");
+  $("empty").hidden = list.length > 0;
+  $("count").textContent = `${list.length} de ${P.length} projetos`;
+  renderFilters();
+}
+
+document.addEventListener("click", (e) => {
+  const c = e.target.closest(".chip");
+  if (c){ state[c.dataset.k] = c.dataset.v; save(); render(); return; }
+  const t = e.target.closest("[data-tech]");
+  if (t){ e.preventDefault(); state.tech = state.tech===t.dataset.tech ? null : t.dataset.tech; render(); $("h-proj").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); return; }
+  const cp = e.target.closest("[data-copy]");
+  if (cp){
+    const el = $(cp.dataset.copy);
+    navigator.clipboard?.writeText(el.textContent).then(() => { $("copied").textContent = "Copiado."; })
+      .catch(() => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("copied").textContent = "Texto selecionado. Use Ctrl+C para copiar."; });
+  }
+});
+$("techclear").addEventListener("click", () => { state.tech = null; render(); });
+
+function save(){ try{ localStorage.setItem("pf-filters", JSON.stringify({area:state.area,status:state.status})); }catch(_){} }
+try{ const s = JSON.parse(localStorage.getItem("pf-filters")||"null"); if (s && (s.area==="Todas"||AREAS.includes(s.area))) state.area = s.area; if (s && (s.status==="Todos"||STATUS[s.status])) state.status = s.status; }catch(_){}
+
+$("now").innerHTML = NOW.map(([a,b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join("");
+$("trail").innerHTML = TRAIL.map(([w,a,b,f]) => `<div class="step${f?" future":""}"><div class="when">${esc(w)}</div><div><b>${esc(a)}</b><p>${esc(b)}</p></div></div>`).join("");
+$("stack").innerHTML = STACK.map(([h,items]) => `<div><h3>${esc(h)}</h3><div class="row">${items.map((k) => `<button type="button" class="tag" data-tech="${esc(k)}">${esc(k)}</button>`).join("")}</div></div>`).join("");
+$("certs").innerHTML = CERTS.map(([n,i,d,u]) => `<tr><td>${esc(n)}</td><td>${esc(i)}</td><td class="d">${esc(d)}</td><td>${u?`<a href="${esc(u)}" target="_blank" rel="noopener">verificar</a>`:`<span class="note">certificado em PDF</span>`}</td></tr>`).join("");
+render();
+</script>
+</body>
+</html>
